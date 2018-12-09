@@ -9,23 +9,34 @@
                     <!-- Mail -->
                     <!-- Password -->
                     <!-- Store Data? Yes/No -->
-                    <h1>Please enter your information</h1>
+                    <h1>Sign up here!</h1>
                     <hr>
-                    <div class="form-group">
-                        <label for="firstName">First Name</label>
+                    <div v-if="customSwitch"
+                         class="form-group">
+                        <label for="fullName">Full Name</label>
                         <input
                             type="text"
-                            id="firstName"
+                            id="fullName"
                             class="form-control"
-                            v-model.lazy="userData.firstName">
+                            v-model.lazy="userData.fullName">
                     </div>
-                    <div class="form-group">
-                        <label for="lastName">Last Name</label>
-                        <input
-                            type="text"
-                            id="lastName"
-                            class="form-control"
-                            v-model.lazy="userData.lastName">
+                    <div v-else>
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input
+                                type="text"
+                                id="firstName"
+                                class="form-control"
+                                v-model.lazy="userData.firstName">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input
+                                type="text"
+                                id="lastName"
+                                class="form-control"
+                                v-model.lazy="userData.lastName">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="email">Mail</label>
@@ -63,9 +74,17 @@
                                 class="form-control"
                                 v-model="storeData"> No
                         </label>
+                    </div>
+                    <div>
+                        <p>Switch between Full Name and First/Last Name inputs</p>
+                        <custom-switch v-model="customSwitch"></custom-switch>
+                    </div>
+                    <div>
                         <br>
                         <button
-                            class="btn btn-primary">Submit!</button>
+                            class="btn btn-primary"
+                            @click.prevent="submitted">Submit!</button>
+
                     </div>
                     <!-- Part 2 5 Points -->
                     <!-- Only display the Form if it has NOT been submitted -->
@@ -78,17 +97,19 @@
             </div>
         </form>
         <hr>
-        <div class="row">
+        <div class="row" v-if="isSubmitted"><!-- Part 2 here -->
             <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4>Your Data</h4>
                     </div>
                     <div class="panel-body">
-                        <p>Full Name: {{ userData.firstName }} {{ userData.lastName }}</p>
+                        <p v-if="customSwitch">Full Name: {{ userData.fullName }}</p> <!-- part 3 here -->
+                        <p v-else>Full Name: {{ userData.firstName }} {{ userData.lastName }}</p>
                         <p>Mail: {{ userData.email }}</p>
                         <p>Password: {{ userData.password }}</p>
                         <p>Store in Database?: {{ storeData }}</p>
+                        <p>Switched: {{ customSwitch }}</p>
                     </div>
                 </div>
             </div>
@@ -97,16 +118,29 @@
 </template>
 
 <script>
+    import Switch from './Switch.vue';
+
     export default {
         data() {
             return{
                 userData: {
+                    fullName: '',
                     email: '',
                     password: '',
                     firstName: '',
                     lastName: ''
                 },
-                storeData: ''
+                storeData: '',
+                isSubmitted: false,
+                customSwitch: true
+            }
+        },
+        components: {
+            customSwitch: Switch
+        },
+        methods: {
+            submitted() {
+                this.isSubmitted = true;//part 2 also here
             }
         }
     }
